@@ -3,27 +3,39 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import classification_report
+from nltk.stem.snowball import SnowballStemmer
 
 import re
 import pandas as pd
 import pickle
+import nltk
+import preprocessor as p
+
+nltk.download('stopwords')
+
+stemmer = SnowballStemmer("english", ignore_stopwords=True)
 
 # importing the dataset
-# DATASET_COLUMNS  = ["sentiment", "ids", "date", "flag", "user", "tweet"]
-# DATASET_ENCODING = "ISO-8859-1"
-# dataset = pd.read_csv('./1.6miltweets.csv', delimiter=',', encoding=DATASET_ENCODING , names=DATASET_COLUMNS)
+DATASET_COLUMNS  = ["sentiment", "ids", "date", "flag", "user", "tweet"]
+DATASET_ENCODING = "ISO-8859-1"
+dataset = pd.read_csv('./training.1600000.processed.noemoticon.csv', delimiter=',', encoding=DATASET_ENCODING , names=DATASET_COLUMNS)
 
-dataset = pd.read_csv('./Corona_NLP_train.csv', delimiter=',')
+# dataset = pd.read_csv('./Corona_NLP_train.csv', delimiter=',')
 
-# removing the unnecessary columns.
+# removing the unnecessary columns and duplicates
 dataset = dataset[['sentiment','tweet']]
-
-# dropping last n rows using drop
-# dataset.drop(dataset.tail(900000).index, inplace = True)
+dataset.drop_duplicates()
 
 token = RegexpTokenizer(r'[a-zA-Z0-9]+')
 
-tfidf = TfidfVectorizer(stop_words='english', max_features=20000, ngram_range=(1,2), tokenizer=token.tokenize)
+# tokenizing and stemming
+dataset['tweet'] = dataset['tweet'].apply(p.clean)
+dataset['tokenized_tweet'] = dataset['OriginalTweet'].apply(token.tokenize)
+dataset['stemmed_tweet'] = dataset['tokenized_tweet'].apply(lambda tweets: [stemmer.stem(tweet) for tweet in tweets])
+
+# dataset.head()
+
+tfidf = TfidfVectorizer(stop_words='english', max_features=20000, ngram_range=(1,2))
 
 X = dataset['tweet']
 
