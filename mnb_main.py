@@ -37,9 +37,9 @@ dataset['stemmed_tweet'] = dataset['tokenized_tweet'].apply(lambda tweets: [stem
 
 tfidf = TfidfVectorizer(stop_words='english', max_features=20000, ngram_range=(1,2))
 
-X = dataset['tweet']
+X = dataset['stemmed_tweet']
 
-X = tfidf.fit_transform(dataset['tweet'])
+X = tfidf.fit_transform(X)
 
 y = dataset['sentiment']
 
