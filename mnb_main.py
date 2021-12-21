@@ -32,12 +32,13 @@ token = RegexpTokenizer(r'[a-zA-Z0-9]+')
 dataset['tweet'] = dataset['tweet'].apply(p.clean)
 dataset['tokenized_tweet'] = dataset['OriginalTweet'].apply(token.tokenize)
 dataset['stemmed_tweet'] = dataset['tokenized_tweet'].apply(lambda tweets: [stemmer.stem(tweet) for tweet in tweets])
+dataset['joined_tweet'] = [" ".join(word) for word in dataset['stemmed_tweet']]
 
 # dataset.head()
 
 tfidf = TfidfVectorizer(stop_words='english', max_features=20000, ngram_range=(1,2))
 
-X = dataset['stemmed_tweet']
+X = dataset['joined_tweet']
 
 X = tfidf.fit_transform(X)
 
