@@ -30,7 +30,7 @@ y = dataset['sentiment']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=5)
 
-LRG = LogisticRegression(random_state=0, class_weight='balanced')
+LRG = LogisticRegression(random_state=0, class_weight='balanced', multi_class ='multinomial', max_iter=200)
 
 LRG.fit(X_train,y_train)
 
