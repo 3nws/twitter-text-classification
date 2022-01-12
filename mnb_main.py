@@ -41,18 +41,29 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 # X_train.shape, X_test.shape
 
 # creating our pipeline that will return an estimator
-pipeline = Pipeline([('tfidf', TfidfVectorizer(stop_words='english', max_features=20000, ngram_range=(1,2), tokenizer=token.tokenize)), ('clf', MultinomialNB())])
+pipeline = Pipeline([('tfidf', TfidfVectorizer(ngram_range=(1,2), tokenizer=token.tokenize)), ('clf', MultinomialNB())])
 
-# this line fits and transforms the intermediate steps while it only fits the last step which is an estimator
-pipeline.fit(X_train, y_train)
+parameters = {
+    'tfidf__max_features': (10000, 20000),
+    'clf__fit_prior': (False,True),
+    'clf__alpha': (1, 0.1, 0.01, 0.001, 0.0001, 0.00001)  
+    }
 
-# testing our predictions
-y_pred = pipeline.predict(X_test)
+clf = GridSearchCV(pipeline, param_grid=parameters, cv=5)
 
-# results
+clf.fit(X_train, y_train)
+
+y_pred = clf.predict(X_test)
+
 print(classification_report(y_test, y_pred))
 
-print(confusion_matrix(y_test, y_pred))
+print("Best: %f using %s" % (clf.best_score_, 
+    clf.best_params_))
+means = clf.cv_results_['mean_test_score']
+stds = clf.cv_results_['std_test_score']
+params = clf.cv_results_['params']
+for mean, stdev, param in zip(means, stds, params):
+    print("%f (%f) with: %r" % (mean, stdev, param))
 
 # exporting the pipeline
-pickle.dump(pipeline, open('./models/mnb_pipeline', 'wb'))
+pickle.dump(clf, open('./models/mnb_pipeline_grid', 'wb'))
