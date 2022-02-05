@@ -8,14 +8,16 @@ import re
 import pandas as pd
 import pickle
 
-dataset = pd.read_csv('./Corona_NLP_train.csv', delimiter=',')
+DATASET_ENCODING = "ISO-8859-1"
+
+dataset = pd.read_csv('./IMDB Dataset.csv', delimiter=',', encoding=DATASET_ENCODING)
 
 token = RegexpTokenizer(r'[a-zA-Z0-9]+')
 tt = TweetTokenizer()
 
 dataset.head()
 
-X = dataset['tweet']
+X = dataset['review']
 
 tfidf = TfidfVectorizer(stop_words='english', max_features=20000, ngram_range=(1,2), tokenizer=token.tokenize)
 
@@ -36,12 +38,12 @@ y_pred = svc.predict(X_test)
 
 print(classification_report(y_test, y_pred))
 
-test_tweet = "scandinavia #news:  norway : it's illegal for employers to require covid  passports  denmark\
-    sweden : they won't be bringing in covid  vaccination passports  #holdtheline #enoughisenough #nomedicalapartheid #nomasks #nomorelockdowns #openforall #corona #coronavirus"
-# test_tweet2 = "everyone should get vaccinated as soon as possible"
-vector = tfidf.transform([test_tweet])
+# test_tweet = "scandinavia #news:  norway : it's illegal for employers to require covid  passports  denmark\
+#     sweden : they won't be bringing in covid  vaccination passports  #holdtheline #enoughisenough #nomedicalapartheid #nomasks #nomorelockdowns #openforall #corona #coronavirus"
+# # test_tweet2 = "everyone should get vaccinated as soon as possible"
+# vector = tfidf.transform([test_tweet])
 
-print(svc.predict(vector))
+# print(svc.predict(vector))
 
 # exporting the model and the trained vectorizer
 pickle.dump(svc, open('./models/SVC_model', 'wb'))

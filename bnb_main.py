@@ -13,7 +13,11 @@ import pickle
 # DATASET_ENCODING = "ISO-8859-1"
 # dataset = pd.read_csv('./covid4.csv', delimiter=',', encoding=DATASET_ENCODING , names=DATASET_COLUMNS)
 
-dataset = pd.read_csv('./Corona_NLP_train.csv', delimiter=',')
+DATASET_ENCODING = "ISO-8859-1"
+# dataset = pd.read_csv('./training.1600000.processed.noemoticon.csv', delimiter=',', encoding=DATASET_ENCODING , names=DATASET_COLUMNS)
+
+# dataset = pd.read_csv('./Corona_NLP_train.csv', delimiter=',', encoding=DATASET_ENCODING)
+dataset = pd.read_csv('./IMDB Dataset.csv', delimiter=',', encoding=DATASET_ENCODING)
 
 # removing the unnecessary columns.
 # dataset = dataset[['sentiment','tweet']]
@@ -22,9 +26,9 @@ token = RegexpTokenizer(r'[a-zA-Z0-9]+')
 
 tfidf = TfidfVectorizer(stop_words='english', max_features=20000, ngram_range=(1,2), tokenizer=token.tokenize)
 
-X = dataset['tweet']
+X = dataset['review']
 
-X = tfidf.fit_transform(dataset['tweet'])
+X = tfidf.fit_transform(X)
 
 y = dataset['sentiment']
 

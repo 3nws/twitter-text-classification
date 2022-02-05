@@ -18,21 +18,21 @@ import preprocessor as p
 DATASET_ENCODING = "ISO-8859-1"
 # dataset = pd.read_csv('./training.1600000.processed.noemoticon.csv', delimiter=',', encoding=DATASET_ENCODING , names=DATASET_COLUMNS)
 
-dataset = pd.read_csv('./Corona_NLP_train.csv', delimiter=',', encoding=DATASET_ENCODING)
+dataset = pd.read_csv('./IMDB Dataset.csv', delimiter=',', encoding=DATASET_ENCODING)
 
 # removing the unnecessary columns and duplicates
-dataset = dataset[['OriginalTweet','Sentiment']]
+# dataset = dataset[['OriginalTweet','Sentiment']]
 dataset.drop_duplicates()
 
 token = RegexpTokenizer(r'[a-zA-Z0-9]+')
 
 # tokenizing and stemming
-dataset['tweet'] = dataset['OriginalTweet'].apply(p.clean)
-dataset['sentiment'] = dataset['Sentiment']
+# dataset['tweet'] = dataset['OriginalTweet'].apply(p.clean)
+# dataset['sentiment'] = dataset['Sentiment']
 
 # dataset.head()
 
-X = dataset['tweet']
+X = dataset['review']
 
 y = dataset['sentiment']
 
@@ -41,7 +41,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 # X_train.shape, X_test.shape
 
 # creating our pipeline that will return an estimator
-pipeline = Pipeline([('tfidf', TfidfVectorizer(ngram_range=(1,2), tokenizer=token.tokenize)), ('clf', MultinomialNB())])
+pipeline = Pipeline([('tfidf', TfidfVectorizer(max_features=20000, ngram_range=(1,2), tokenizer=token.tokenize)), ('clf', MultinomialNB(alpha=1, fit_prior=False))])
 
 parameters = {
     'tfidf__max_features': (10000, 20000),
@@ -51,19 +51,20 @@ parameters = {
 
 clf = GridSearchCV(pipeline, param_grid=parameters, cv=5)
 
-clf.fit(X_train, y_train)
+pipeline.fit(X_train, y_train)
 
-y_pred = clf.predict(X_test)
+y_pred = pipeline.predict(X_test)
 
 print(classification_report(y_test, y_pred))
 
-print("Best: %f using %s" % (clf.best_score_, 
-    clf.best_params_))
-means = clf.cv_results_['mean_test_score']
-stds = clf.cv_results_['std_test_score']
-params = clf.cv_results_['params']
-for mean, stdev, param in zip(means, stds, params):
-    print("%f (%f) with: %r" % (mean, stdev, param))
+# print("Best: %f using %s" % (clf.best_score_, 
+#     clf.best_params_))
+# means = clf.cv_results_['mean_test_score']
+# stds = clf.cv_results_['std_test_score']
+# params = clf.cv_results_['params']
+# for mean, stdev, param in zip(means, stds, params):
+#     print("%f (%f) with: %r" % (mean, stdev, param))
 
 # exporting the pipeline
-pickle.dump(clf, open('./models/mnb_pipeline_grid', 'wb'))
+pickle.dump(pipeline['clf'], open('./models/MNB_model_88', 'wb'))
+pickle.dump(pipeline['tfidf'], open('./vector/tfidf_mnb_88', 'wb'))

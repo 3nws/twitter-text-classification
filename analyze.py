@@ -13,12 +13,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from collections import Counter
 
-algorithm = 'lrg'
-acc = '78'
+algorithm = 'mnb'
+acc = '88'
 file_name = './models/'+algorithm.upper()+'_model_'+acc
 
 year = "2021"
-month = "november"
+month = "december"
 dataset = pd.read_csv(f'./{year}-data/covid-{month}.csv', delimiter=',')
 
 # removing the unnecessary columns.

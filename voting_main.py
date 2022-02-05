@@ -55,12 +55,12 @@ estimators.append(('LR',
 estimators.append(('SVC', SVC(gamma ='auto', probability = True)))
 estimators.append(('DTC', MNB()))
 
-for name,classifier in estimators:
-    classifier = classifier
-    classifier.fit(X_train, y_train.ravel())
-    predictions = classifier.predict(X_test)
-    predictions_df[name.strip(" :")] = predictions
-    print(name, accuracy_score(y_test, predictions))
+# for name,classifier in estimators:
+#     classifier = classifier
+#     classifier.fit(X_train, y_train.ravel())
+#     predictions = classifier.predict(X_test)
+#     predictions_df[name.strip(" :")] = predictions
+#     print(name, accuracy_score(y_test, predictions))
 
 VTC = VotingClassifier(estimators = estimators, voting ='hard')
 

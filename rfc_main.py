@@ -13,18 +13,22 @@ import pickle
 # DATASET_ENCODING = "ISO-8859-1"
 # dataset = pd.read_csv('./covid4.csv', delimiter=',', encoding=DATASET_ENCODING , names=DATASET_COLUMNS)
 
-dataset = pd.read_csv('./Corona_NLP_train.csv', delimiter=',')
+DATASET_ENCODING = "ISO-8859-1"
+# dataset = pd.read_csv('./training.1600000.processed.noemoticon.csv', delimiter=',', encoding=DATASET_ENCODING , names=DATASET_COLUMNS)
+
+# dataset = pd.read_csv('./Corona_NLP_train.csv', delimiter=',', encoding=DATASET_ENCODING)
+dataset = pd.read_csv('./IMDB Dataset.csv', delimiter=',', encoding=DATASET_ENCODING)
 
 # removing the unnecessary columns.
-dataset = dataset[['tweet','sentiment']]
+# dataset = dataset[['tweet','sentiment']]
 
 token = RegexpTokenizer(r'[a-zA-Z0-9]+')
 
 tfidf = TfidfVectorizer(stop_words='english', max_features=20000, ngram_range=(1,2), tokenizer=token.tokenize)
 
-X = dataset['tweet']
+X = dataset['review']
 
-X = tfidf.fit_transform(dataset['tweet'])
+X = tfidf.fit_transform(X)
 
 y = dataset['sentiment']
 
@@ -43,11 +47,11 @@ y_pred = RFC.predict(X_test)
 
 print(classification_report(y_test, y_pred))
 
-test_tweet = "scandinavia #news:  norway : it's illegal for employers to require covid  passports  denmark\
-    sweden : they won't be bringing in covid  vaccination passports  #holdtheline #enoughisenough #nomedicalapartheid #nomasks #nomorelockdowns #openforall #corona #coronavirus"
-vector = tfidf.transform([test_tweet])
+# test_tweet = "scandinavia #news:  norway : it's illegal for employers to require covid  passports  denmark\
+#     sweden : they won't be bringing in covid  vaccination passports  #holdtheline #enoughisenough #nomedicalapartheid #nomasks #nomorelockdowns #openforall #corona #coronavirus"
+# vector = tfidf.transform([test_tweet])
 
-print(RFC.predict(vector))
+# print(RFC.predict(vector))
 
 # exporting the model and the trained vectorizer
 pickle.dump(RFC, open('./models/RFC_model', 'wb'))

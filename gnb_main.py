@@ -13,7 +13,11 @@ import pickle
 # DATASET_ENCODING = "ISO-8859-1"
 # dataset = pd.read_csv('./covid4.csv', delimiter=',', encoding=DATASET_ENCODING , names=DATASET_COLUMNS)
 
-dataset = pd.read_csv('./covid3.csv', delimiter=',')
+DATASET_ENCODING = "ISO-8859-1"
+# dataset = pd.read_csv('./training.1600000.processed.noemoticon.csv', delimiter=',', encoding=DATASET_ENCODING , names=DATASET_COLUMNS)
+
+# dataset = pd.read_csv('./Corona_NLP_train.csv', delimiter=',', encoding=DATASET_ENCODING)
+dataset = pd.read_csv('./IMDB Dataset.csv', delimiter=',', encoding=DATASET_ENCODING)
 
 # removing the unnecessary columns.
 # dataset = dataset[['sentiment','tweet']]
@@ -22,11 +26,14 @@ token = RegexpTokenizer(r'[a-zA-Z0-9]+')
 
 tfidf = TfidfVectorizer(stop_words='english', max_features=20000, ngram_range=(1,2), tokenizer=token.tokenize)
 
-X = dataset['tweet']
+X = dataset['review']
 
-X = tfidf.fit_transform(dataset['tweet'])
+X = tfidf.fit_transform(X)
 
 y = dataset['sentiment']
+
+X.toarray()
+y.toarray()
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=5)
 
@@ -35,15 +42,13 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 # creating the model usin gaussian naive bayes algorithm
 GNB = GaussianNB()
 
-X.toarray()
-
 # training the model
 GNB.fit(X_train, y_train)
 
 # testing our predictions
 y_pred = GNB.predict(X_test)
 
-print(classification_report(y_test, y_pred, target_names=["negative", "neutral", "positive"]))
+print(classification_report(y_test, y_pred))
 
 # test_tweet = "scandinavia #news:  norway : it's illegal for employers to require covid  passports  denmark\
 #     sweden : they won't be bringing in covid  vaccination passports  #holdtheline #enoughisenough #nomedicalapartheid #nomasks #nomorelockdowns #openforall #corona #coronavirus"
