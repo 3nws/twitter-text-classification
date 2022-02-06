@@ -60,3 +60,6 @@ print(classification_report(y_test, y_pred))
 # params = clf.cv_results_['params']
 # for mean, stdev, param in zip(means, stds, params):
 #     print("%f (%f) with: %r" % (mean, stdev, param))
+
+pickle.dump(mnb, open('./models/MNB_model_', 'wb'))
+pickle.dump(tfidf, open('./vector/tfidf_mnb_', 'wb'))

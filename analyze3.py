@@ -1,3 +1,4 @@
+# %%
 import pickle
 import pandas as pd
 import numpy as np
@@ -13,13 +14,16 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from collections import Counter
 
-algorithm = ''
+algorithm = 'mnb'
 acc = ''
 file_name = './models/'+algorithm.upper()+'_model_'+acc
 
 year = "2021"
-month = "december"
+month = "november"
 dataset = pd.read_csv(f'./{year}-data/covid-{month}.csv', delimiter=',')
+
+
+# %%
 
 # removing the unnecessary columns.
 dataset = dataset[['sentiment','tweet']]
@@ -37,12 +41,36 @@ tweets = X
 
 y_pred = tfidf.transform(X)
 
+
+# %%
+
 predictions = model.predict(y_pred)
+
+print(type(predictions))
+print(model.predict_proba(y_pred))
+
+# %%
+altered_predictions = []
+
+for prediction in model.predict_proba(y_pred):
+    pos_sentiment = float(prediction[1])
+    if pos_sentiment > 0.45 and pos_sentiment < 0.55:
+        altered_predictions.append('neutral')
+    elif pos_sentiment > 0.55:
+        altered_predictions.append('positive')
+    else:
+        altered_predictions.append('negative')
+        
+# print(altered_predictions)
+test = np.array([[x] for x in altered_predictions])
+print(type(test))
+
+# %%
 
 # saving tweets to csv
 tweets.to_csv(f'./analysis/tweets-{month}-{year}.csv')
 # saving sentiment predictions to csv
-np.savetxt(f'./analysis/predictions-{month}-{year}.csv',predictions, delimiter=',', fmt=('%s'))
+np.savetxt(f'./analysis/predictions-{month}-{year}.csv',altered_predictions, delimiter=',', fmt=('%s'))
 
 DATASET_COLUMNS  = ["sentiment"]
 
@@ -50,6 +78,9 @@ DATASET_COLUMNS  = ["sentiment"]
 df = pd.read_csv(f'./analysis/predictions-{month}-{year}.csv', header=None)
 df.rename(columns={0: 'sentiment'}, inplace=True)
 df.to_csv(f'./analysis/predictions-{month}-{year}.csv', index=False) # save to new csv file
+
+
+# %%
 
 # merging tweets and predictions
 filenames = [f'./analysis/tweets-{month}-{year}.csv', f'./analysis/predictions-{month}-{year}.csv']
@@ -66,17 +97,23 @@ merged = pd.concat(dfs,axis=1)
 # write it out
 merged.to_csv(f"./analysis/merged-{month}-{year}.csv", header=None, index=None)
 
+
+# %%
+
 df = pd.read_csv(f'./analysis/merged-{month}-{year}.csv')
 
-labels = ['negative', 'positive']
+labels = ['negative', 'neutral', 'positive']
 
 title_type = df.groupby('sentiment').agg('count')
 
-type_labels = ['positive', 'negative']
+type_labels = ['neutral', 'positive', 'negative']
 type_counts = title_type.tweet.sort_values()
 
-colors = ['g', 'r']
+colors = ['grey', 'g', 'r']
 
 plt.subplot(aspect=1, title=f'Percentage of tweets pro or against vaccination in {month.capitalize()} {year}')
 type_show_ids = plt.pie(type_counts, labels=type_labels, autopct='%1.1f%%', shadow=True, colors=colors)
 plt.show()
+
+
+
