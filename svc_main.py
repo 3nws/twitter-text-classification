@@ -1,7 +1,7 @@
 from nltk.tokenize import TweetTokenizer, RegexpTokenizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
-from sklearn.svm import LinearSVC
+from sklearn.svm import SVC
 from sklearn.metrics import classification_report
 
 import re
@@ -31,11 +31,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 # X_train.shape, X_test.shape
 
-svc = LinearSVC()
+svc = SVC(probability=True)
 svc.fit(X_train, y_train)
 
 y_pred = svc.predict(X_test)
 
+print(svc.predict_proba(sub_main))
 print(classification_report(y_test, y_pred))
 
 # test_tweet = "scandinavia #news:  norway : it's illegal for employers to require covid  passports  denmark\
