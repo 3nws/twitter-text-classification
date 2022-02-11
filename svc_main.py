@@ -3,6 +3,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score
 
 import re
 import pandas as pd
@@ -36,7 +37,7 @@ svc.fit(X_train, y_train)
 
 y_pred = svc.predict(X_test)
 
-print(svc.predict_proba(sub_main))
+# print(svc.predict_proba(sub_main))
 print(classification_report(y_test, y_pred))
 
 # test_tweet = "scandinavia #news:  norway : it's illegal for employers to require covid  passports  denmark\
@@ -46,6 +47,9 @@ print(classification_report(y_test, y_pred))
 
 # print(svc.predict(vector))
 
+print(accuracy_score(y_test, y_pred))
+acc = accuracy_score(y_test, y_pred)
+
 # exporting the model and the trained vectorizer
-pickle.dump(svc, open('./models/SVC_model', 'wb'))
-pickle.dump(tfidf, open('./vector/tfidf_vectorizer', 'wb'))
+pickle.dump(svc, open(f'./models/SVC_model_{acc}', 'wb'))
+pickle.dump(tfidf, open(f'./vector/tfidf_vectorizer_{acc}', 'wb'))

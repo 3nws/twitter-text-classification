@@ -4,6 +4,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from sklearn.ensemble import AdaBoostClassifier
+from sklearn.metrics import accuracy_score
 
 import re
 import pandas as pd
@@ -55,6 +56,9 @@ print(classification_report(y_test, y_pred))
 
 # print(clf.predict(vector))
 
+print(accuracy_score(y_test, y_pred))
+acc = int(accuracy_score(y_test, y_pred)*100)
+
 # exporting the model and the trained vectorizer
-pickle.dump(clf, open('./models/adaboost', 'wb'))
-pickle.dump(tfidf, open('./vector/tfidf_vectorizer_xg', 'wb'))
+pickle.dump(clf, open(f'./models/adaboost_{acc}', 'wb'))
+pickle.dump(tfidf, open(f'./vector/tfidf_vectorizer_ada_{acc}', 'wb'))

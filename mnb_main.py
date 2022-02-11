@@ -6,6 +6,7 @@ from sklearn.metrics import classification_report
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score
 
 import re
 import pandas as pd
@@ -64,7 +65,9 @@ print(classification_report(y_test, y_pred))
 # params = clf.cv_results_['params']
 # for mean, stdev, param in zip(means, stds, params):
 #     print("%f (%f) with: %r" % (mean, stdev, param))
+print(accuracy_score(y_test, y_pred))
+acc = accuracy_score(y_test, y_pred)
 
 # exporting the pipeline
-pickle.dump(pipeline['clf'], open('./models/MNB_model_88', 'wb'))
-pickle.dump(pipeline['tfidf'], open('./vector/tfidf_mnb_88', 'wb'))
+pickle.dump(pipeline['clf'], open(f'./models/MNB_model_{acc}', 'wb'))
+pickle.dump(pipeline['tfidf'], open(f'./vector/tfidf_mnb_{acc}', 'wb'))
