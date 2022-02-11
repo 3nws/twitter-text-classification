@@ -65,8 +65,7 @@ print(classification_report(y_test, y_pred))
 # params = clf.cv_results_['params']
 # for mean, stdev, param in zip(means, stds, params):
 #     print("%f (%f) with: %r" % (mean, stdev, param))
-print(accuracy_score(y_test, y_pred))
-acc = accuracy_score(y_test, y_pred)
+acc = int(accuracy_score(y_test, y_pred)*100)
 
 # exporting the pipeline
 pickle.dump(pipeline['clf'], open(f'./models/MNB_model_{acc}', 'wb'))

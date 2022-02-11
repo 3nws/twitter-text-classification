@@ -47,8 +47,7 @@ print(classification_report(y_test, y_pred))
 
 # print(svc.predict(vector))
 
-print(accuracy_score(y_test, y_pred))
-acc = accuracy_score(y_test, y_pred)
+acc = int(accuracy_score(y_test, y_pred)*100)
 
 # exporting the model and the trained vectorizer
 pickle.dump(svc, open(f'./models/SVC_model_{acc}', 'wb'))

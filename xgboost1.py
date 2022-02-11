@@ -56,8 +56,7 @@ print(classification_report(y_test, y_pred))
 
 # print(clf.predict(vector))
 
-print(accuracy_score(y_test, y_pred))
-acc = accuracy_score(y_test, y_pred)*100
+acc = int(accuracy_score(y_test, y_pred)*100)
 
 # exporting the model and the trained vectorizer
 pickle.dump(clf, open(f'./models/xgboost_{acc}', 'wb'))
