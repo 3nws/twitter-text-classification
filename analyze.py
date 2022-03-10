@@ -22,14 +22,14 @@ month = "december"
 dataset = pd.read_csv(f'./{year}-data/covid-{month}.csv', delimiter=',')
 
 # removing the unnecessary columns.
-dataset = dataset[['sentiment','tweet']]
+dataset = dataset[['sentiment', 'tweet']]
 
 with open(file_name, 'rb') as f:
     model = pickle.load(f)
 
 token = RegexpTokenizer(r'[a-zA-Z0-9]+')
 
-tfidf = pickle.load(open(f"./vector/tfidf_{algorithm}_{acc}","rb"))
+tfidf = pickle.load(open(f"./vector/tfidf_{algorithm}_{acc}", "rb"))
 
 X = dataset['tweet'].fillna(' ')
 
@@ -42,17 +42,20 @@ predictions = model.predict(y_pred)
 # saving tweets to csv
 tweets.to_csv(f'./analysis/tweets-{month}-{year}.csv')
 # saving sentiment predictions to csv
-np.savetxt(f'./analysis/predictions-{month}-{year}.csv',predictions, delimiter=',', fmt=('%s'))
+np.savetxt(f'./analysis/predictions-{month}-{year}.csv',
+           predictions, delimiter=',', fmt=('%s'))
 
-DATASET_COLUMNS  = ["sentiment"]
+DATASET_COLUMNS = ["sentiment"]
 
 # adding sentiment column to the beginning
 df = pd.read_csv(f'./analysis/predictions-{month}-{year}.csv', header=None)
 df.rename(columns={0: 'sentiment'}, inplace=True)
-df.to_csv(f'./analysis/predictions-{month}-{year}.csv', index=False) # save to new csv file
+# save to new csv file
+df.to_csv(f'./analysis/predictions-{month}-{year}.csv', index=False)
 
 # merging tweets and predictions
-filenames = [f'./analysis/tweets-{month}-{year}.csv', f'./analysis/predictions-{month}-{year}.csv']
+filenames = [f'./analysis/tweets-{month}-{year}.csv',
+             f'./analysis/predictions-{month}-{year}.csv']
 dfs = []
 for filename in filenames:
     # read the csv, making sure the first two columns are str
@@ -62,7 +65,7 @@ for filename in filenames:
     dfs.append(df)
 
 # concatenate them horizontally
-merged = pd.concat(dfs,axis=1)
+merged = pd.concat(dfs, axis=1)
 # write it out
 merged.to_csv(f"./analysis/merged-{month}-{year}.csv", header=None, index=None)
 
@@ -77,6 +80,8 @@ type_counts = title_type.tweet.sort_values()
 
 colors = ['g', 'r']
 
-plt.subplot(aspect=1, title=f'Percentage of tweets pro or against vaccination in {month.capitalize()} {year}')
-type_show_ids = plt.pie(type_counts, labels=type_labels, autopct='%1.1f%%', shadow=True, colors=colors)
+plt.subplot(
+    aspect=1, title=f'Percentage of tweets pro or against vaccination in {month.capitalize()} {year}')
+type_show_ids = plt.pie(type_counts, labels=type_labels,
+                        autopct='%1.1f%%', shadow=True, colors=colors)
 plt.show()

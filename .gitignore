@@ -4,4 +4,6 @@
 *.pyc
 /models/
 /vector/
+/vectors/
 /__pycache__/
+*.txt
