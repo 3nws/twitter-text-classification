@@ -28,18 +28,19 @@ DATASET_ENCODING = "ISO-8859-1"
 # DATASET_COLUMNS  = ["sentiment", "ids", "date", "flag", "user", "tweet"]
 # dataset = pd.read_csv('./training.1600000.processed.noemoticon.csv', delimiter=',', encoding=DATASET_ENCODING , names=DATASET_COLUMNS)
 
-dataset = pd.read_csv('./IMDB Dataset.csv', delimiter=',', encoding=DATASET_ENCODING)
+dataset = pd.read_csv('./IMDB Dataset.csv', delimiter=',',
+                      encoding=DATASET_ENCODING)
 # dataset = pd.read_csv('./Corona_NLP_train.csv',
 #                       delimiter=',', encoding=DATASET_ENCODING)
 dataset_dir = 'imdb'
+# dataset_dir = 'coronaNLP'
+# dataset_dir = 'sentiment140'
 model_dir = './models/'+dataset_dir
 vector_dir = './vectors/'+dataset_dir
 
 # removing the unnecessary columns and duplicates
 # dataset = dataset[['OriginalTweet','Sentiment']]
 dataset.drop_duplicates()
-
-token = RegexpTokenizer(r'[a-zA-Z0-9]+')
 
 # dataset.head()
 
@@ -66,7 +67,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 # X_train.shape, X_test.shape
 
 # creating our pipeline that will return an estimator
-pipeline = Pipeline([('tfidf', TfidfVectorizer(
+pipeline = Pipeline([('tfidf', TfidfVectorizer(stop_words='english',
     tokenizer=token.tokenize)), ('clf', MultinomialNB())])
 
 parameters = {
@@ -83,6 +84,8 @@ clf.fit(X_train, y_train)
 y_pred = clf.predict(X_test)
 
 print(classification_report(y_test, y_pred))
+
+print(confusion_matrix(y_test, y_pred))
 
 print("Best: %f using %s" % (clf.best_score_,
                              clf.best_params_))
