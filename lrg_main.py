@@ -1,3 +1,5 @@
+from nltk.corpus import stopwords
+import string
 from sklearn.linear_model import LogisticRegression
 from nltk.stem.snowball import SnowballStemmer
 from nltk.tokenize import TweetTokenizer, RegexpTokenizer
@@ -14,8 +16,6 @@ import pandas as pd
 import pickle
 import nltk
 import numpy as np
-import preprocessor as p
-p.set_options(p.OPT.URL, p.OPT.MENTION, p.OPT.HASHTAG)
 
 
 nltk.download('stopwords')
@@ -29,9 +29,9 @@ DATASET_ENCODING = "ISO-8859-1"
 # dataset = pd.read_csv('./training.1600000.processed.noemoticon.csv', delimiter=',', encoding=DATASET_ENCODING , names=DATASET_COLUMNS)
 
 dataset = pd.read_csv('./IMDB Dataset.csv', delimiter=',',
-  encoding=DATASET_ENCODING)
+                      encoding=DATASET_ENCODING)
 # dataset = pd.read_csv('./Corona_NLP_train.csv',
-                    #   delimiter=',', encoding=DATASET_ENCODING)
+#   delimiter=',', encoding=DATASET_ENCODING)
 dataset_dir = 'imdb'
 # dataset_dir = 'coronaNLP'
 # dataset_dir = 'sentiment140'
@@ -40,16 +40,57 @@ vector_dir = './vectors/'+dataset_dir
 
 # removing the unnecessary columns and duplicates
 # dataset = dataset[['OriginalTweet','Sentiment']]
+# dataset = dataset[['tweet','sentiment']]
+dataset = dataset[['review','sentiment']]
 dataset.drop_duplicates()
 
 # dataset.head()
 
 
-def preprocess_tweets(tweet):
-    tweet = p.clean(tweet)
+# Preprocessing
+
+
+def remove_URL(text):
+    url = re.compile(r"https?://\S+|www\.\S+")
+    return url.sub(r"", text)
+
+
+def remove_punct(text):
+    translator = str.maketrans("", "", string.punctuation)
+    return text.translate(translator)
+
+
+def remove_mention(text):
+    return re.sub("@[A-Za-z0-9]+", "", text)
+
+
+def stem_tweets(tweet):
     tokens = tweet.split()
     stemmed_tokens = [stemmer.stem(token) for token in tokens]
     return ' '.join(stemmed_tokens)
+
+
+# remove stopwords
+
+
+stop = set(stopwords.words("english"))
+
+
+def remove_stopwords(text):
+    stop = set(stopwords.words("english"))
+
+    filtered_words = [word.lower()
+                      for word in text.split() if word.lower() not in stop]
+    return " ".join(filtered_words)
+
+
+def preprocess_tweets(tweet):
+    tweet = remove_mention(tweet)
+    tweet = remove_URL(tweet)
+    tweet = remove_punct(tweet)
+    tweet = stem_tweets(tweet)
+    tweet = remove_stopwords(tweet)
+    return tweet
 
 
 X = dataset['review']
@@ -67,7 +108,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 # X_train.shape, X_test.shape
 
 # creating our pipeline that will return an estimator
-pipeline = Pipeline([('tfidf', TfidfVectorizer(stop_words='english',
+pipeline = Pipeline([('tfidf', TfidfVectorizer(
     tokenizer=token.tokenize)), ('clf', LogisticRegression(class_weight='balanced', multi_class="multinomial", random_state=42))])
 
 parameters = {
@@ -79,7 +120,7 @@ parameters = {
 }
 
 clf = GridSearchCV(pipeline, param_grid=parameters, n_jobs=-2, cv=ShuffleSplit(n_splits=1),
-                    verbose=2)
+                   verbose=2)
 
 clf.fit(X_train, y_train)
 
@@ -89,13 +130,13 @@ print(classification_report(y_test, y_pred))
 
 print(confusion_matrix(y_test, y_pred))
 
-# print("Best: %f using %s" % (clf.best_score_,
-#                              clf.best_params_))
-# means = clf.cv_results_['mean_test_score']
-# stds = clf.cv_results_['std_test_score']
-# params = clf.cv_results_['params']
-# for mean, stdev, param in zip(means, stds, params):
-#     print("%f (%f) with: %r" % (mean, stdev, param))
+print("Best: %f using %s" % (clf.best_score_,
+                             clf.best_params_))
+means = clf.cv_results_['mean_test_score']
+stds = clf.cv_results_['std_test_score']
+params = clf.cv_results_['params']
+for mean, stdev, param in zip(means, stds, params):
+    print("%f (%f) with: %r" % (mean, stdev, param))
 
 
 acc = int(accuracy_score(y_test, y_pred)*100)
