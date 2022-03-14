@@ -77,7 +77,7 @@ parameters = {
     'clf__alpha': (1, 0.1, 0.01, 0.001)
 }
 
-clf = GridSearchCV(pipeline, param_grid=parameters, cv=5)
+clf = GridSearchCV(pipeline, param_grid=parameters, cv=5, verbose=1)
 
 clf.fit(X_train, y_train)
 

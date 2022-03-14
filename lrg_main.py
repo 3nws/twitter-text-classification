@@ -1,3 +1,4 @@
+import joblib
 from nltk.corpus import stopwords
 import string
 from sklearn.linear_model import LogisticRegression
@@ -122,7 +123,7 @@ parameters = {
 clf = GridSearchCV(pipeline, param_grid=parameters, n_jobs=-2, cv=ShuffleSplit(n_splits=1),
                    verbose=2)
 
-clf.fit(X_train, y_train)
+clf = clf.fit(X_train, y_train)
 
 y_pred = clf.predict(X_test)
 
@@ -142,5 +143,7 @@ for mean, stdev, param in zip(means, stds, params):
 acc = int(accuracy_score(y_test, y_pred)*100)
 
 # exporting the pipeline
-pickle.dump(pipeline['clf'], open(f'{model_dir}/LRG_model_{acc}', 'wb'))
-pickle.dump(pipeline['tfidf'], open(f'{vector_dir}/tfidf_lrg_{acc}', 'wb'))
+# pickle.dump(clf, open(f'{model_dir}/LRG_model_{acc}', 'wb'))
+# pickle.dump(pipeline['tfidf'], open(f'{vector_dir}/tfidf_lrg_{acc}', 'wb'))
+
+joblib.dump(clf.best_estimator_, f'{model_dir}/LRG_model_{acc}.pkl')
