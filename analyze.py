@@ -1,4 +1,4 @@
-import pickle
+import joblib
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,31 +7,46 @@ import matplotlib.cm as cm
 import matplotlib as mpl
 
 from matplotlib.gridspec import GridSpec
-from nltk.tokenize import TweetTokenizer, RegexpTokenizer
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from collections import Counter
 
-algorithm = ''
-acc = ''
-file_name = './models/'+algorithm.upper()+'_model_'+acc
+algorithm = 'mnb'
+acc = '88'
 
-year = "2021"
-month = "december"
-dataset = pd.read_csv(f'./{year}-data/covid-{month}.csv', delimiter=',')
+year = "2022"
+month = "january"
 
-# removing the unnecessary columns.
-dataset = dataset[['sentiment', 'tweet']]
+# dataset_dir = 'sentiment140'
+dataset_dir = 'imdb'
+# dataset_dir = 'coronaNLP'
 
-with open(file_name, 'rb') as f:
-    model = pickle.load(f)
+max_f = 50
+# max_f = 30
+# max_f = 20
 
-token = RegexpTokenizer(r'[a-zA-Z0-9]+')
+# n_gram = (1, 1)
+# n_gram = (1, 2)
+n_gram = (2, 2)
 
-tfidf = pickle.load(open(f"./vector/tfidf_{algorithm}_{acc}", "rb"))
+max_f_str = str(max_f) + 'k'
 
-X = dataset['tweet'].fillna(' ')
+vectorizer_path = f"./vectors/vectorizer_{max_f_str}_{dataset_dir}_{n_gram}.pkl"
+
+model_path = f"./models/{algorithm.lower()}_{dataset_dir}_{acc}.pkl"
+
+# already processed
+df = pd.read_csv(f'./{year}-data/covid-{month}.csv', delimiter=',')
+
+df = df[['tweet', 'sentiment']]
+
+tfidf = joblib.load(vectorizer_path)
+
+model = joblib.load(model_path)
+
+tfidf, model
+
+X = df.iloc[:, 0].fillna(' ')
 
 tweets = X
 
@@ -44,8 +59,6 @@ tweets.to_csv(f'./analysis/tweets-{month}-{year}.csv')
 # saving sentiment predictions to csv
 np.savetxt(f'./analysis/predictions-{month}-{year}.csv',
            predictions, delimiter=',', fmt=('%s'))
-
-DATASET_COLUMNS = ["sentiment"]
 
 # adding sentiment column to the beginning
 df = pd.read_csv(f'./analysis/predictions-{month}-{year}.csv', header=None)
