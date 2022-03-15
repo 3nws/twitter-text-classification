@@ -5,5 +5,6 @@
 /models/
 /vector/
 /vectors/
+/dataframes/
 /__pycache__/
 *.txt
