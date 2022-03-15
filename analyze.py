@@ -50,6 +50,8 @@ X = df.iloc[:, 0].fillna(' ')
 
 tweets = X
 
+num_of_tweets_analyzed = len(tweets)
+
 y_pred = tfidf.transform(X)
 
 predictions = model.predict(y_pred)
@@ -94,7 +96,7 @@ type_counts = title_type.tweet.sort_values()
 colors = ['g', 'r']
 
 plt.subplot(
-    aspect=1, title=f'Percentage of tweets pro or against vaccination in {month.capitalize()} {year}')
+    aspect=1, title=f'Percentage of tweets pro or against vaccination in {month.capitalize()} {year}\nClassified {num_of_tweets_analyzed} tweets.')
 type_show_ids = plt.pie(type_counts, labels=type_labels,
                         autopct='%1.1f%%', shadow=True, colors=colors)
 plt.show()
