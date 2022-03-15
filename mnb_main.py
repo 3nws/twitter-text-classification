@@ -23,34 +23,9 @@ nltk.download('stopwords')
 stemmer = SnowballStemmer("english", ignore_stopwords=True)
 token = RegexpTokenizer(r'[a-zA-Z0-9]+')
 
-# importing the dataset
-DATASET_ENCODING = "ISO-8859-1"
-# DATASET_COLUMNS  = ["sentiment", "ids", "date", "flag", "user", "tweet"]
-# dataset = pd.read_csv('./training.1600000.processed.noemoticon.csv', delimiter=',', encoding=DATASET_ENCODING , names=DATASET_COLUMNS)
 
-dataset = pd.read_csv('./IMDB Dataset.csv', delimiter=',',
-                      encoding=DATASET_ENCODING)
-# dataset = pd.read_csv('./Corona_NLP_train.csv',
-#                       delimiter=',', encoding=DATASET_ENCODING)
-dataset_dir = 'imdb'
-# dataset_dir = 'coronaNLP'
-# dataset_dir = 'sentiment140'
-model_dir = './models/'+dataset_dir
-vector_dir = './vectors/'+dataset_dir
-
-# removing the unnecessary columns and duplicates
-# dataset = dataset[['OriginalTweet','Sentiment']]
-dataset.drop_duplicates()
-
-# dataset.head()
-
-
-def preprocess_tweets(tweet):
-    tweet = p.clean(tweet)
-    tokens = tweet.split()
-    stemmed_tokens = [stemmer.stem(token) for token in tokens]
-    return ' '.join(stemmed_tokens)
-
+# importing the processed dataframe
+df = joblib.load(f'./dataframes/df_{dataset_dir}.pkl')
 
 X = dataset['review']
 # X = dataset['tweet']
@@ -67,12 +42,9 @@ X_train, X_test, y_train, y_test = train_test_split(
 # X_train.shape, X_test.shape
 
 # creating our pipeline that will return an estimator
-pipeline = Pipeline([('tfidf', TfidfVectorizer(stop_words='english',
-    tokenizer=token.tokenize)), ('clf', MultinomialNB())])
+pipeline = Pipeline([('clf', MultinomialNB())])
 
 parameters = {
-    'tfidf__max_features': (20000, 30000, 40000, 50000),
-    'tfidf__ngram_range': ((1, 1), (1, 2), (2, 2)),
     'clf__fit_prior': (False, True),
     'clf__alpha': (1, 0.1, 0.01, 0.001)
 }
