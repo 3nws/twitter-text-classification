@@ -21,7 +21,7 @@ dataset = pd.read_csv('./IMDB Dataset.csv', delimiter=',', encoding=DATASET_ENCO
 
 # removing the unnecessary columns and duplicates
 # dataset = dataset[['OriginalTweet','Sentiment']]
-dataset.drop_duplicates()
+dataset = dataset.drop_duplicates()
 
 token = RegexpTokenizer(r'[a-zA-Z0-9]+')
 

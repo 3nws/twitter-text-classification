@@ -27,6 +27,9 @@ token = RegexpTokenizer(r'[a-zA-Z0-9]+')
 # importing the processed dataframe
 df = joblib.load(f'./dataframes/df_{dataset_dir}.pkl')
 
+df = df.drop_duplicates()
+
+
 X = dataset['review']
 # X = dataset['tweet']
 # X = dataset['OriginalTweet']

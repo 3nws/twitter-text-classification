@@ -19,6 +19,8 @@ DATASET_ENCODING = "ISO-8859-1"
 # dataset = pd.read_csv('./Corona_NLP_train.csv', delimiter=',', encoding=DATASET_ENCODING)
 dataset = pd.read_csv('./IMDB Dataset.csv', delimiter=',', encoding=DATASET_ENCODING)
 
+dataset = dataset.drop_duplicates()
+
 # removing the unnecessary columns.
 # dataset = dataset[['tweet','sentiment']]
 

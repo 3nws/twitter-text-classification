@@ -42,8 +42,9 @@ vector_dir = './vectors/'+dataset_dir
 # removing the unnecessary columns and duplicates
 # dataset = dataset[['OriginalTweet','Sentiment']]
 # dataset = dataset[['tweet','sentiment']]
-dataset = dataset[['review','sentiment']]
-dataset.drop_duplicates()
+dataset = dataset[['review', 'sentiment']]
+
+dataset = dataset.drop_duplicates()
 
 # dataset.head()
 

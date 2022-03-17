@@ -38,6 +38,8 @@ model_path = f"./models/{algorithm.lower()}_{dataset_dir}_{acc}.pkl"
 # already processed
 df = pd.read_csv(f'./{year}-data/covid-{month}.csv', delimiter=',')
 
+df = df.drop_duplicates()
+
 df = df[['tweet', 'sentiment']]
 
 tfidf = joblib.load(vectorizer_path)
