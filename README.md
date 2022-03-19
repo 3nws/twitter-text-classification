@@ -1,2 +1,1 @@
-# twitter-text-classification
- 
+Training different traditional as well as deep learning machine learning algorithms with labeled data and utilizing them to classify unlabeled data and visually represent them.
