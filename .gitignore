@@ -11,3 +11,5 @@
 *.txt
 /visuals/
 /tokenizers/
+/logs/
+/notebooks/
